@@ -103,69 +103,40 @@ class GenericAssistantView(generics.GenericAPIView, mixins.ListModelMixin, mixin
 # states
 
 
-class GenericStatesView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin,
-                        mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-    serializer_class = StatesSerializer
-    queryset = States.objects.all()
-    lookup_field = 'id'
-
-    # authentication_classes = [SessionAuthentication,BasicAuthentication]
-    # parser_classes = [permissions.IsAuthenticated]
+class States_View(APIView):
 
     def get(self, request):
-        return self.list(request)
+        states = States.objects.all()
+        serializer = StatesSerializer(states,many=True)
+        return Response(serializer.data)
+
+
+#cities
+class Cities_View(APIView):
+
+    def get(self, request,state_id):
+          cities = Cities.objects.filter(state_id=state_id)
+          serializer = CitiesSerializer(cities,many=True)
+          return Response(serializer.data)
+
 
     def post(self, request):
-        return self.create(request)
+        serializer = CitiesSerializer(data=request.data)
 
-    def put(self, request, id=None):
-        return self.update(request, id)
-
-    # def delete(self,request, id=None):
-    #     return self.destroy(request,id)
-
-
-class GenericCitiesView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin,
-                        mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-    serializer_class = CitiesSerializer
-    queryset = Cities.objects.all()
-    lookup_field = 'state_id'
-
-    # authentication_classes = [SessionAuthentication,BasicAuthentication]
-    # parser_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, state_id):
-        return self.list(request)
-
-    def post(self, request):
-        return self.create(request)
-
-    def put(self, request, id=None):
-        return self.update(request, id)
-
-    # def delete(self,request, id=None):
-    #     return self.destroy(request,id)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # talukas
-class Talukas_List(APIView):
-
-    def get_object(self, id):
-        try:
-            return Talukas.objects.get(id=id)
-
-        except Talukas.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
+class Talukas_View(APIView):
 
     def get(self, request,city_id):
-        city_id = self.get_object(city_id)
-        serializer = TalukasSerializer(city_id)
-        return Response(serializer.data)
-    # def get(self, request):
-    #         taluka = Talukas.objects.all()
-    #         serializer = TalukasSerializer(taluka,many=True)
-    #         return Response(serializer.data)
+          taluka = Talukas.objects.filter(city_id=city_id)
+          serializer = TalukasSerializer(taluka,many=True)
+          return Response(serializer.data)
+
 
     def post(self, request):
         serializer = TalukasSerializer(data=request.data)
@@ -196,8 +167,6 @@ class Farmersdata(APIView):
 
 # Agri-Expert details get and post code
 class Expertsdata(APIView):
-
-
 
     def get(self, request):
         experts = AgriExpert.objects.all()

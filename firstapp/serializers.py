@@ -42,6 +42,7 @@ class CitiesSerializer(serializers.ModelSerializer):
 
         # can show only selected fields
         fields = ('id', 'city_name','state_id')
+        depth = 1
 
 
 class TalukasSerializer(serializers.ModelSerializer):
@@ -52,6 +53,7 @@ class TalukasSerializer(serializers.ModelSerializer):
 
         # can show only selected fields
         fields = ('id', 'taluka_name','city_id')
+        depth=1
 
     # def create(self, validated_data):
     #     city_id = validated_data.pop('city_id')
