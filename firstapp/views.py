@@ -9,100 +9,14 @@ from .serializers import FarmerSerializer, ExpertSerializer, AssistantSerializer
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.views import APIView
-from rest_framework import generics
-from rest_framework import mixins
-
-from django.http import JsonResponse
-from django.forms.models import model_to_dict
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-
-# Create your views here.
-
-
-# Farmer  CRUD operations
-class GenericFarmerView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin,
-                        mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-    serializer_class = FarmerSerializer
-    queryset = Farmer.objects.all()
-    lookup_field = 'id'
-
-    # authentication_classes = [SessionAuthentication,BasicAuthentication]
-    # parser_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-
-    def post(self, request):
-        return self.create(request)
-
-    def put(self, request, id=None):
-        return self.update(request, id)
-
-    def delete(self, request, id=None):
-        return self.destroy(request, id)
-
-
 # AgriExpert  CRUD operations
-class GenericExpertView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin,
-                        mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-    serializer_class = ExpertSerializer
-    queryset = AgriExpert.objects.all()
-    lookup_field = 'id'
 
-    # authentication_classes = [SessionAuthentication,BasicAuthentication]
-    # parser_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-
-    def post(self, request):
-        return self.create(request)
-
-    def put(self, request, id=None):
-        return self.update(request, id)
-
-    def delete(self, request, id=None):
-        return self.destroy(request, id)
-
-
-# AgriAssistant  CRUD operations
-
-class GenericAssistantView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin,
-                           mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-    serializer_class = AssistantSerializer
-    queryset = AgriAssistant.objects.all()
-    lookup_field = 'id'
-
-    # authentication_classes = [SessionAuthentication,BasicAuthentication]
-    # parser_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-
-    def post(self, request):
-        return self.create(request)
-
-    def put(self, request, id=None):
-        return self.update(request, id)
-
-    def delete(self, request, id=None):
-        return self.destroy(request, id)
 
 
 # states
-
-
 class States_View(APIView):
 
     def get(self, request):
@@ -118,7 +32,6 @@ class Cities_View(APIView):
           cities = Cities.objects.filter(state_id=state_id)
           serializer = CitiesSerializer(cities,many=True)
           return Response(serializer.data)
-
 
     def post(self, request):
         serializer = CitiesSerializer(data=request.data)
@@ -147,14 +60,18 @@ class Talukas_View(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Farmer  CRUD operations
+class Farmers_View(APIView):
+    def get(self, request,id=None):
+        if id:
+            farmers = Farmer.objects.filter(id=id)
+            serializer = FarmerSerializer(farmers, many=True)
+            return Response(serializer.data)
+        else:
+            farmers = Farmer.objects.all()
+            serializer = FarmerSerializer(farmers, many=True)
+            return Response(serializer.data)
 
-
-# farmer details get and post code
-class Farmersdata(APIView):
-    def get(self, request):
-        farmers = Farmer.objects.all()
-        serializer = FarmerSerializer(farmers, many=True)
-        return Response(serializer.data)
 
     def post(self, request):
         serializer = FarmerSerializer(data=request.data)
@@ -165,13 +82,19 @@ class Farmersdata(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Agri-Expert details get and post code
-class Expertsdata(APIView):
+# Agri-Expert CRUD operations
+class Experts_View(APIView):
 
-    def get(self, request):
-        experts = AgriExpert.objects.all()
-        serializer = ExpertSerializer(experts, many=True)
-        return Response(serializer.data)
+    def get(self, request,id=None):
+        if id:
+            experts = AgriExpert.objects.filter(id=id)
+            serializer = ExpertSerializer(experts, many=True)
+            return Response(serializer.data)
+        else:
+            experts = AgriExpert.objects.all()
+            serializer = ExpertSerializer(experts, many=True)
+            return Response(serializer.data)
+
 
     def post(self, request):
         serializer = ExpertSerializer(data=request.data)
@@ -182,12 +105,19 @@ class Expertsdata(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Agri-Expert details get and post code
-class Assistantdata(APIView):
-    def get(self, request):
-        experts = AgriAssistant.objects.all()
-        serializer = AssistantSerializer(experts, many=True)
-        return Response(serializer.data)
+# Agri-Expert CRUD operations
+class Assistant_View(APIView):
+    def get(self, request, id=None):
+        if id:
+            experts = AgriAssistant.objects.filter(id=id)
+            serializer = AssistantSerializer(experts, many=True)
+            return Response(serializer.data)
+        else:
+            experts = AgriAssistant.objects.all()
+            serializer = AssistantSerializer(experts, many=True)
+            return Response(serializer.data)
+
+
 
     def post(self, request):
         serializer = AssistantSerializer(data=request.data)

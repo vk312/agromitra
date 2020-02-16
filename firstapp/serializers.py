@@ -8,7 +8,8 @@ class FarmerSerializer(serializers .ModelSerializer):
         model = Farmer
 
         #can show only selected fields
-        fields = ['id','farmer_name','phone','mpin','aadhar_no']
+        fields = ('id','farmer_name','phone','mpin','aadhar_no')
+        depth=1
         #fields = '__all__'   #returns all fields__
 
 
