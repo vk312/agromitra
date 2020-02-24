@@ -11,7 +11,7 @@ urlpatterns = [
     path('agri_assistant/<int:id>/',Assistant_View.as_view()),
     path('states/', States_View.as_view()),
     path('cities/<int:state_id>/', Cities_View.as_view()),
-    path('talukas/<int:city_id>/', Talukas_View.as_view()),
-
+    path('talukas/<int:city_id>/<int:state_id>/', Talukas_View.as_view()),
+    path('talukas_all/', Talukas_View.as_view()),
 
 ]

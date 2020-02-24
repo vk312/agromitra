@@ -3,6 +3,7 @@ from django.http.response import HttpResponse
 from django.views.generic import View
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.renderers import JSONRenderer
+from django.db.models import Subquery
 from .models import Farmer, AgriExpert, AgriAssistant, States, Cities, Talukas
 from .serializers import FarmerSerializer, ExpertSerializer, AssistantSerializer, StatesSerializer, CitiesSerializer, \
     TalukasSerializer
@@ -45,11 +46,20 @@ class Cities_View(APIView):
 # talukas
 class Talukas_View(APIView):
 
-    def get(self, request,city_id):
-          taluka = Talukas.objects.filter(city_id=city_id)
-          serializer = TalukasSerializer(taluka,many=True)
-          return Response(serializer.data)
-
+    def get(self, request,city_id=None,state_id=None):
+        #print(request)
+        #print(city_id,state_id)
+        if city_id and state_id:
+            cityid = Cities.objects.filter(state_id=state_id)
+            #print(cityid[0])
+            talukas = Talukas.objects.filter(city_id=city_id)
+            serializer = TalukasSerializer(talukas, many=True)
+            #print(serializer.data)
+            return Response(serializer.data)
+        else:
+            talukas = Talukas.objects.all()
+            serializer = TalukasSerializer(talukas, many=True)
+            return Response(serializer.data)
 
     def post(self, request):
         serializer = TalukasSerializer(data=request.data)
@@ -75,7 +85,7 @@ class Farmers_View(APIView):
 
     def post(self, request):
         serializer = FarmerSerializer(data=request.data)
-
+        print(request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
